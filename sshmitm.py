@@ -8,11 +8,11 @@ import paramiko
 from paramiko.py3compat import u
 import select
 
-PORT = 2200
-REMOTE_PORT = 443
+PORT = 3001
+REMOTE_PORT = 3000
 LOG_FILE = 'sshmitm.log'
 DENY_ALL = False
-DOMAIN = ""
+DOMAIN = "192.168.0.100"
 # setup logging
 logger = logging.getLogger("access.log")
 logger.setLevel(logging.INFO)
@@ -114,6 +114,6 @@ class SSHHandler(socketserver.StreamRequestHandler):
                 pass
 
 
-def launcher():
+if __name__=="__main__":
     sshserver = socketserver.ThreadingTCPServer(("0.0.0.0", PORT), SSHHandler)
     sshserver.serve_forever()
