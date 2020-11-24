@@ -4,8 +4,6 @@
 Configure host network setting
 `iptable route host 22 port to 3000 port`
 
-## 
-
 ## Requirements
 `docker`
 `docker-compose`
@@ -31,3 +29,4 @@ You will get a container id
 
 ## Stop the containers
 
+make stop
