@@ -86,14 +86,15 @@ class SSHHandler(socketserver.StreamRequestHandler):
                     x = chan.recv(1024)
                     if len(x) == 0:
                         break
-                    logger.info('%s' % x)
+                    #print('%s' % x)
                     chan2.send(x)
 
                 if chan2 in r:
                     x = chan2.recv(1024)
+                    x_test= u(x)
                     if len(x) == 0:
                         break
-                    logger.info('%s' % x)
+                    print('%s' % x_test)
                     chan.send(x)
 
             server.event.wait(10)
