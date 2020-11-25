@@ -12,4 +12,4 @@ RUN chmod -R 777 /src
 
 EXPOSE 3000
 
-CMD python -u sshmitm.py
+CMD python3 -u sshmitm.py
