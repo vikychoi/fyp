@@ -6,4 +6,13 @@ services:
   sshmitm:
     build: sshmitm
     ports: ['3000:3000']
+    volumes:
+       - ssh-log:/src/log
     restart: on-failure
+  filebeats:
+    build: filebeats
+    restart: on-failure
+    volumes:
+       - ssh-log:/log
+volumes:
+  ssh-log:

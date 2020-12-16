@@ -1,4 +1,5 @@
-FROM arm32v6/alpine:latest
+#FROM arm32v6/alpine:latest
+FROM alpine:latest
 
 # add openssh and clean
 RUN apk add --update openssh \
