@@ -1,5 +1,5 @@
 Two type of log file:  
 
-sshLogin.log
-
-sshmitm-{Date}-{Time}.log
+sshmitm.json - formatted json log
+ 
+sshmitm-{Date}-{Time}.log - raw ssh tty log

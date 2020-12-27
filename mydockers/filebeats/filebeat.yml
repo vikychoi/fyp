@@ -413,7 +413,7 @@ filebeat.inputs:
   # For each file found under this path, a harvester is started.
   # Make sure not file is defined twice as this can lead to unexpected behaviour.
   paths:
-    - /log/*.log
+    - /log/sshmitm.json
     #- c:\programdata\elasticsearch\logs\*
 
   # Configure the file encoding for reading files with international characters
@@ -495,11 +495,11 @@ filebeat.inputs:
   # JSON key on which to apply the line filtering and multiline settings. This key
   # must be top level and its value must be string, otherwise it is ignored. If
   # no text key is defined, the line filtering and multiline features cannot be used.
-  #json.message_key:
+  json.message_key: event
 
   # By default, the decoded JSON is placed under a "json" key in the output document.
   # If you enable this setting, the keys are copied top level in the output document.
-  #json.keys_under_root: false
+  json.keys_under_root: true
 
   # If keys_under_root and this setting are enabled, then the values from the decoded
   # JSON object overwrite the fields that Filebeat normally adds (type, source, offset, etc.)

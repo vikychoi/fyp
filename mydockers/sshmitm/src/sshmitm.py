@@ -11,13 +11,14 @@ import time
 import re
 import os 
 from utils.utils import truncate_utf8_chars
+from utils.utils import logToJson
 
 PORT = 3000
 REMOTE_PORT = 22
-#LOG_FILE_CLIENT = 'log/sshmitm'+time.strftime("%Y%m%d-%H%M%S")+'-CLIENT'+'.log'
-LOG_FILE_LOGIN='log/sshLogin.log'
+#LOG_FILE_LOGIN='log/sshLogin.log'
 DENY_ALL = False
 DOMAIN = "sshd"
+HOSTNAME="#"
 # setup logging
 def getLogger(name,log_file):
     logger = logging.getLogger(name+".log")
@@ -27,7 +28,7 @@ def getLogger(name,log_file):
     logger.addHandler(lh)
     return logger,lh
 
-logger_login,_=getLogger("login",LOG_FILE_LOGIN)
+#logger_login,_ = getLogger("login",LOG_FILE_LOGIN)
 
 
 def ttyDecode(byteChar,log_file):
@@ -35,7 +36,6 @@ def ttyDecode(byteChar,log_file):
     if strByte=="b'\\x08\\x1b[J'": #backspace
         truncate_utf8_chars(log_file, 1, ignore_newlines=True)
         return ""
-
     string=byteChar.decode()
     # ansi_escape = re.compile(r'''
     #     \x1B  # ESC
@@ -49,12 +49,12 @@ def ttyDecode(byteChar,log_file):
     #     )
     # ''', re.VERBOSE)
     #print(string)
+
     badCharacter=['\[[0-9][a-z]','\[[0-9];[0-9][0-9][a-z]','\[[a-z]']
     for regex in badCharacter:
         ansi_escape=re.compile(regex)
         if ansi_escape.search(string):
             string = ansi_escape.sub('', string)
-        
     return string
 
 
@@ -76,14 +76,14 @@ class Server (paramiko.ServerInterface):
         return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
 
     def check_auth_password(self, username, password):
-#        self.logger_client.info('IP: %s, User: %s, Password: %s \r\n' % (self.client_address[0],username, password))
-        logger_login.info('IP: %s, User: %s, Password: %s, Time : %s \r\n' % (self.client_address[0],
-                                                        username, password,time.strftime('%Y%m%d-%H%M%S',
-                                                        time.localtime())))                                                
-        if DENY_ALL is True:
-            return paramiko.AUTH_FAILED
+#        logger_login.info('IP: %s, User: %s, Password: %s, Time : %s \r\n' % (self.client_address[0],
+#                                                        username, password,time.strftime('%Y%m%d-%H%M%S',
+#                                                        time.localtime())))                                                
         self.password = password
         self.username = username
+        self.accessTime=time.strftime('%Y%m%d-%H%M%S',time.localtime())
+        if DENY_ALL is True:
+            return paramiko.AUTH_FAILED
 
         return paramiko.AUTH_SUCCESSFUL
 
@@ -113,16 +113,21 @@ class SSHHandler(socketserver.StreamRequestHandler):
             if chan is None:
                 t.close()
                 return
-            print('Authenticated!')
-
 
             self.client = paramiko.SSHClient()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.client.connect(DOMAIN, username=server.username,
-                                password=server.password, port=REMOTE_PORT)
+            try:
+                self.client.connect(DOMAIN, username=server.username,
+                                    password=server.password, port=REMOTE_PORT)
+            except paramiko.ssh_exception.AuthenticationException:
+                logToJson(HOSTNAME,server.username,server.password,server.accessTime,server.client_address[0],'auth_failed')
+                print('Authentication failed')
+                return
+            
+            print('Authenticated!')
             chan2 = self.client.invoke_shell()
 
-            self.LOG_FILE_SERVER = 'log/sshmitm'+time.strftime('%Y%m%d-%H%M%S', time.localtime())+'-SERVER'+'.log'    
+            self.LOG_FILE_SERVER = 'log/sshmitm-'+server.accessTime+'.log'
             self.logger_server,self.lh=getLogger("server",self.LOG_FILE_SERVER)
             while True:
                 r, w, e = select.select([chan2, chan], [], [])
@@ -130,7 +135,6 @@ class SSHHandler(socketserver.StreamRequestHandler):
                     x = chan.recv(1024)
                     if len(x) == 0:
                         break
-#                    server.logger_client.info('%s' % ttyDecode(x,LOG_FILE_CLIENT))
                     chan2.send(x)
 
                 if chan2 in r:
@@ -155,6 +159,10 @@ class SSHHandler(socketserver.StreamRequestHandler):
             try:
                 t.close()
                 self.logger_server.removeHandler(self.lh)
+
+                logToJson(HOSTNAME,server.username,server.password,
+                            server.accessTime,server.client_address[0],
+                            'logged_in',self.LOG_FILE_SERVER)
             except:
                 pass
 
