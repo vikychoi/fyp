@@ -84,8 +84,11 @@ class Server (paramiko.ServerInterface):
         self.accessTime=time.strftime('%Y%m%d-%H%M%S',time.localtime())
         if DENY_ALL is True:
             return paramiko.AUTH_FAILED
-
-        return paramiko.AUTH_SUCCESSFUL
+        if username=="root" and password=="123456":
+            return paramiko.AUTH_SUCCESSFUL
+        else:
+            logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed')
+            return paramiko.AUTH_FAILED
 
     def check_channel_shell_request(self, channel):
         self.event.set()
