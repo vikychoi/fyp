@@ -128,7 +128,7 @@ class SSHHandler(socketserver.StreamRequestHandler):
             chan2 = self.client.invoke_shell()
 
             self.LOG_FILE_SERVER = 'log/sshmitm-'+server.accessTime+'.log'
-            self.logger_server,self.lh=getLogger("server",self.LOG_FILE_SERVER)
+            self.logger_server,self.lh=getLogger(str(server.accessTime),self.LOG_FILE_SERVER)
             while True:
                 r, w, e = select.select([chan2, chan], [], [])
                 if chan in r:
