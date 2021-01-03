@@ -401,6 +401,11 @@ filebeat.inputs:
 # * filestream: Improved version of log input. Experimental.
 # * stdin: Reads the standard in
 
+- type: log
+  enabled: true
+  paths:
+   - /tcpdump/*.pcap
+
 #------------------------------ Log input --------------------------------
 - type: log
 

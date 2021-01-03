@@ -14,5 +14,41 @@ services:
     restart: on-failure
     volumes:
        - ssh-log:/log
+       - json-log:/tcpdump
+#  packetbeats:
+#    build: packetbeats
+#    restart: on-failure
+#    environment:
+#       - ELASTICSEARCH_HOSTS=52.246.186.129
+#       - ELASTICSEARCH_USERNAME=elastic
+#       - ELASTICSEARCH_PASSWORD=myfyp@123
+#    cap_add:
+#       - NET_ADMIN
+  tcpdump:
+    build: tcpdump
+    network_mode: "service:sshd"
+    volumes:
+      - pcap-log:/tcpdump
+    command: [ "-C", "10", "-W", "2", "-U", "-v", "-i", "any", "-w", "/tcpdump/tcpdump.pcap" ]
+
+  tshark:
+    build: tshark
+    environment:
+      - ELASTICSEARCH_HOSTS=52.246.186.129
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=myfyp@123
+    volumes:
+      - pcap-log:/in
+    command: tail -F /etc/passwd
+
+  pcap2json:
+    build: pcap2json
+    restart: on-failure
+    volumes:
+      - json-log:/out
+      - pcap-log:/in
+    command: tail -F /etc/passwd
 volumes:
   ssh-log:
+  pcap-log:
+  json-log:
