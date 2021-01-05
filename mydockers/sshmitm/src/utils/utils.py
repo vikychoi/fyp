@@ -26,7 +26,9 @@ def logToJson(hostname,username,password,accessTime,IP,event,file_path=""):
                 if 'temp' in locals():
                     log['sshCommand'].append(temp)
                 temp={'command':'','response':[]}
-                temp['command']=i[len(hostname)+1:]
+                fullCommand=i[len(hostname)+1:]
+                temp['command']=fullCommand
+                temp['main_command']=fullCommand.split(' ')[0]
                 commandStart=True
             elif commandStart:
                 temp['response'].append(i)

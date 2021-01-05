@@ -416,6 +416,8 @@ filebeat.inputs:
     - /log/sshmitm.json
     #- c:\programdata\elasticsearch\logs\*
 
+  tags: ["sshmitm"]
+
   # Configure the file encoding for reading files with international characters
   # following the W3C recommendation for HTML5 (http://www.w3.org/TR/encoding).
   # Some sample encodings:

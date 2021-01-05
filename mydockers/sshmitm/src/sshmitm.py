@@ -7,6 +7,7 @@ import paramiko
 from paramiko.py3compat import u
 import select
 import time
+from datetime import datetime
 import re
 import os 
 from utils.utils import logToJson
@@ -41,7 +42,7 @@ class Server (paramiko.ServerInterface):
 #                                                        time.localtime())))                                                
         self.password = password
         self.username = username
-        self.accessTime=time.strftime('%Y%m%d-%H%M%S',time.localtime())
+        self.accessTime=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         if DENY_ALL is True:
             return paramiko.AUTH_FAILED
         if username=="root" and password=="123456":
