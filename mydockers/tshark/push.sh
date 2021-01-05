@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function esbulk() {
   curl -H content-type:application/x-ndjson -X POST \
@@ -11,4 +11,17 @@ function esput() {
     -s -w "\n" --data-binary "@-"
 }
 
-tshark -r $1 -T ek | esbulk && echo "success"
+
+for file in /in/*; do
+  echo "reading file $file"
+  size=$(wc -c $file | awk -F " " '{print $1}')
+  now=$(date +%s)
+  last_modified=$(date -r $file +%s)
+  let untouched_duration=$now-$last_modified
+  echo "ud = $untouched_duration"
+  echo "size = $size"
+  if(($size>=${MAX_FILE_SIZE} && $untouched_duration>60));then	#upload the dump file if it reaches max size
+    echo "uploading $file"
+    tshark -r $file -T ek | esbulk > /dev/null
+  fi
+done

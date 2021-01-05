@@ -400,12 +400,6 @@ filebeat.inputs:
 # * log: Reads every line of the log file (default)
 # * filestream: Improved version of log input. Experimental.
 # * stdin: Reads the standard in
-
-- type: log
-  enabled: true
-  paths:
-   - /tcpdump/*.pcap
-
 #------------------------------ Log input --------------------------------
 - type: log
 
@@ -1322,7 +1316,7 @@ output.elasticsearch:
   # Scheme and port can be left out and will be set to the default (http and 9200)
   # In case you specify and additional path, the scheme is required: http://localhost:9200/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
-  hosts: ["localhost:9200"]
+  hosts: ["${ELASTICSEARCH_HOSTS}:9200"]
 
   # Set gzip compression level.
   #compression_level: 0
@@ -1335,8 +1329,8 @@ output.elasticsearch:
 
   # Authentication credentials - either API key or username/password.
   #api_key: "id:api_key"
-  #username: "elastic"
-  #password: "changeme"
+  username: "${ELASTICSEARCH_USERNAME}"
+  password: "${ELASTICSEARCH_PASSWORD}"
 
   # Dictionary of HTTP parameters to pass within the URL with index operations.
   #parameters:
@@ -1468,7 +1462,7 @@ output.logstash:
   enabled: true
 
   # The Logstash hosts
-  hosts: ["52.246.186.129:5044"]
+  hosts: ["${ELASTICSEARCH_HOSTS}:5044"]
 
   # Number of workers per Logstash host.
   #worker: 1
