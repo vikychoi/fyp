@@ -45,11 +45,18 @@ class Server (paramiko.ServerInterface):
         self.accessTime=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         if DENY_ALL is True:
             return paramiko.AUTH_FAILED
-        if username=="root" and password=="123456":
-            return paramiko.AUTH_SUCCESSFUL
-        else:
+
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        try:
+            client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
+        except paramiko.ssh_exception.AuthenticationException:
             logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed')
+            print('Authentication failed')
             return paramiko.AUTH_FAILED
+        
+        return paramiko.AUTH_SUCCESSFUL
+
 
     def check_channel_shell_request(self, channel):
         self.event.set()
