@@ -39,6 +39,6 @@ def logToJson(hostname,username,password,accessTime,IP,event,file_path=""):
 
 
 def convertToText(logFile):
-    os.system('./utils/vt100-parser/vt100.py '+logFile+' > '+logFile+'.log')
+    os.system('./utils/vt100.py '+logFile+' > '+logFile+'.log')
     os.system('rm '+logFile)
     
