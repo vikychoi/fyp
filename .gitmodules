@@ -1,3 +1,0 @@
-[submodule "mydockers/sshmitm/src/utils/vt100-parser"]
-	path = mydockers/sshmitm/src/utils/vt100-parser
-	url = https://github.com/MarkLodato/vt100-parser
