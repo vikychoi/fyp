@@ -17,12 +17,13 @@ while true; do
 	  size=$(wc -c $file | awk -F " " '{print $1}')
 	  now=$(date +%s)
 	  last_modified=$(date -r $file +%s)
+	  base=$(basename $file)
 	  let untouched_duration=$now-$last_modified
 	  if(($size>=${MAX_FILE_SIZE} && $untouched_duration<${SLEEP_DURATION}));then	#upload the dump file if it reaches max size
 	    echo "uploading $file"
 	    echo "ud = $untouched_duration"
             echo "size = $size"
-	    tshark -r $file -T ek | esbulk
+	    tshark -r $file -T ek > /out/${base}.json
 	  fi
 	done
 	echo "Done. Sleep"

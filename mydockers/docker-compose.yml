@@ -18,23 +18,26 @@ services:
       - ELASTICSEARCH_PASSWORD=myfyp@123
     volumes:
        - ssh-log:/log
+       - json-log:/json
   tcpdump:
     build: tcpdump
     network_mode: "service:sshd"
     volumes:
       - pcap-log:/tcpdump
-    command: [ "-C", "1", "-W", "10", "-U", "-v", "-i", "any", "-w", "/tcpdump/tcpdump.pcap", "port not 22"]
+    command: [ "-C", "10", "-W", "10", "-U", "-v", "-i", "any", "-w", "/tcpdump/tcpdump.pcap", "port not 22"]
 
-  tshark:
-    build: tshark
-    environment:
-      - ELASTICSEARCH_HOSTS=52.246.186.129
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=myfyp@123
-      - MAX_FILE_SIZE=1000000
-      - SLEEP_DURATION=10
-    volumes:
-      - pcap-log:/in
+#  tshark:
+#    build: tshark
+#    environment:
+#      - ELASTICSEARCH_HOSTS=52.246.186.129
+#      - ELASTICSEARCH_USERNAME=elastic
+#      - ELASTICSEARCH_PASSWORD=myfyp@123
+#      - MAX_FILE_SIZE=1000000
+#      - SLEEP_DURATION=10
+#    volumes:
+#      - pcap-log:/in
+#      - json-log:/out
 volumes:
   ssh-log:
   pcap-log:
+  json-log:

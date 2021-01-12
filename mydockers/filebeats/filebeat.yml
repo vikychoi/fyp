@@ -402,6 +402,14 @@ filebeat.inputs:
 # * stdin: Reads the standard in
 #------------------------------ Log input --------------------------------
 - type: log
+  enabled: true
+  paths:
+    - /json/*.json
+  tags: ["pcap"]
+  json.message_key: event
+  json.keys_under_root: true
+
+- type: log
 
   # Change to true to enable this input configuration.
   enabled: true
@@ -607,7 +615,7 @@ filebeat.inputs:
   # Files for the modification data is older then clean_inactive the state from the registry is removed
   # By default this is disabled.
   #clean_inactive: 0
-
+-x --no-duplicate-keys
   # Removes the state for file which cannot be found on disk anymore immediately
   #clean_removed: true
 
