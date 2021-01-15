@@ -1,15 +1,19 @@
 #FROM arm32v6/alpine:latest
 FROM alpine:latest
 
+ENV FILENAME=OpenWrt.tar.xz
+
 # add openssh and clean
-RUN apk add --update openssh \
+RUN apk add --update openssh tar\
 && rm  -rf /tmp/* /var/cache/apk/*
-# add entrypoint script
 ADD docker-entrypoint.sh /usr/local/bin
 COPY --chown=root profile /etc/profile
 
 COPY --chown=root banner /etc/ssh/sshd-banner
 COPY --chown=root banner /etc/motd
+
+COPY --chown=root ${FILENAME} /${FILENAME}
+RUN tar -xf /${FILENAME} --skip-old-files -C /  && rm -f /${FILENAME} 
 
 
 #make sure we get fresh keys
