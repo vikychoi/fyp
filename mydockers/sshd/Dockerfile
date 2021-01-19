@@ -4,7 +4,7 @@ FROM alpine:latest
 ENV FILENAME=OpenWrt.tar.xz
 
 # add openssh and clean
-RUN apk add --update openssh tar\
+RUN apk add --update openssh tar xz\
 && rm  -rf /tmp/* /var/cache/apk/*
 ADD docker-entrypoint.sh /usr/local/bin
 COPY --chown=root profile /etc/profile

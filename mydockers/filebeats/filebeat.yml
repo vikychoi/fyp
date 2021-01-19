@@ -615,7 +615,7 @@ filebeat.inputs:
   # Files for the modification data is older then clean_inactive the state from the registry is removed
   # By default this is disabled.
   #clean_inactive: 0
--x --no-duplicate-keys
+  
   # Removes the state for file which cannot be found on disk anymore immediately
   #clean_removed: true
 
