@@ -52,7 +52,7 @@ class Server (paramiko.ServerInterface):
             client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
         except paramiko.ssh_exception.AuthenticationException:
             logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed')
-            print('Authentication failed')
+            print('client to sshmitm Authentication failed')
             return paramiko.AUTH_FAILED
         
         return paramiko.AUTH_SUCCESSFUL
@@ -91,8 +91,9 @@ class SSHHandler(socketserver.StreamRequestHandler):
                 self.client.connect(DOMAIN, username=server.username,
                                     password=server.password, port=REMOTE_PORT)
             except paramiko.ssh_exception.AuthenticationException:
-                logToJson(HOSTNAME,server.username,server.password,server.accessTime,server.client_address[0],'auth_failed')
-                print('Authentication failed')
+                #logToJson(HOSTNAME,server.username,server.password,server.accessTime,server.client_address[0],'auth_failed')
+                #print('Authentication failed')
+                print('sshmitm to sshd Authentication failed')
                 return
             
             print('Authenticated!')
