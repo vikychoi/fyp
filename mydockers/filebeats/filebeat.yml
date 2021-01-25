@@ -402,7 +402,7 @@ filebeat.inputs:
 # * stdin: Reads the standard in
 #------------------------------ Log input --------------------------------
 - type: log
-  enabled: true
+  enabled: false
   paths:
     - /json/*.json
   tags: ["pcap"]
