@@ -19,17 +19,19 @@ services:
     volumes:
        - ssh-log:/log
        - json-log:/json
-  # tcpdump:
-  #   build: tcpdump
-  #   network_mode: "service:sshd"
-  #   volumes:
-  #     - pcap-log:/tcpdump
-  #   command: [ "-C", "10", "-W", "10", "-U", "-v", "-i", "any", "-w", "/tcpdump/tcpdump.pcap", "port not 22"]
-  arikime:
-    build: arkime
+
+  tcpdump:
+    build: tcpdump
     network_mode: "service:sshd"
+    volumes:
+      - pcap-log:/tcpdump
     cap_add:
       - NET_ADMIN
+
+  arkime:
+    build: arkime
+    volumes:
+      - pcap-log:/tcpdump
     environment:
       - ELASTICSEARCH_HOSTS=23.99.106.134
       - ELASTICSEARCH_USERNAME=elastic
