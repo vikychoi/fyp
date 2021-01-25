@@ -22,21 +22,16 @@ services:
 
   tcpdump:
     build: tcpdump
+    restart: on-failure
     network_mode: "service:sshd"
     volumes:
       - pcap-log:/tcpdump
-    cap_add:
-      - NET_ADMIN
 
   arkime:
     build: arkime
+    restart: on-failure
     volumes:
       - pcap-log:/tcpdump
-    environment:
-      - ELASTICSEARCH_HOSTS=23.99.106.134
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=myfyp@123
-
 #  tshark:
 #    build: tshark
 #    environment:

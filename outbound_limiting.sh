@@ -6,8 +6,8 @@ if [ `id -u` -ne 0 ]; then
    exit 1
 fi
 
-ELK_IP=52.246.186.129
-packet_per_sec=60
+ELK_IP=23.99.106.134
+packet_per_sec=1
 
 # defining function
 remap_tcp_port() {

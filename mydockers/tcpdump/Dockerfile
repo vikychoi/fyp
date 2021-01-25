@@ -1,8 +1,9 @@
 FROM alpine
 
-RUN apk add --update --no-cache tcpdump && rm -rf /var/cache/apk/*
+RUN apk add --update --no-cache tcpdump bash && rm -rf /var/cache/apk/*
 
-COPY entry.sh /entry.sh
-RUN chmod +x /entry.sh
+COPY entry.sh /
 
-CMD /entry.sh && tail -f /dev/null
+RUN chmod 555 /entry.sh
+
+ENTRYPOINT [ "/entry.sh" ]
