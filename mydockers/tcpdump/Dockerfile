@@ -1,6 +1,7 @@
-FROM alpine
+FROM ubuntu:20.04
 
-RUN apk add --update --no-cache tcpdump bash && rm -rf /var/cache/apk/*
+RUN apt update && \
+apt install -y tcpdump bash
 
 COPY entry.sh /
 
