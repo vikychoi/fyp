@@ -23,7 +23,7 @@ outbound_restrict() {
     #max $1 outbound packets per IP
     iptables -A OUTPUT -p tcp -d $ELK_IP -j ACCEPT
     iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
-    ipatbles -A OUTPUT -p tcp --sport 50727 -j ACCEPT
+    iptables -A OUTPUT -p tcp --sport 50727 -j ACCEPT
     iptables -A OUTPUT -p tcp -m hashlimit --hashlimit-name outbound_limit --hashlimit-upto $1/sec --hashlimit-mode dstip -j ACCEPT
     iptables -A OUTPUT -p tcp -j DROP
 }
