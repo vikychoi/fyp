@@ -29,4 +29,4 @@ You will get a container id
 
 ## Stop the containers
 
-make stop
+`make stop`

@@ -5,7 +5,7 @@ services:
     restart: on-failure
   sshmitm:
     build: sshmitm
-    ports: ['3000:3000']
+    ports: ['22:3000']
     volumes:
        - ssh-log:/src/log
     restart: on-failure
@@ -32,6 +32,7 @@ services:
     restart: on-failure
     volumes:
       - pcap-log:/tcpdump
+    command: ["--pcapfile","/tcpdump/tcpdump-pipe","--copy", "--flush", "-o", "offlineDispatchAfter=1"]
 #  tshark:
 #    build: tshark
 #    environment:
