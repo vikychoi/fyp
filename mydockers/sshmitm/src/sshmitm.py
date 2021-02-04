@@ -71,6 +71,7 @@ class SSHHandler(socketserver.StreamRequestHandler):
     def handle(self):
         try:
             t = paramiko.Transport(self.connection)
+            t.local_version="SSH-2.0-OpenSSH_8.4"
             t.add_server_key(host_key)
             server = Server(self.client_address)
             try:
