@@ -12,6 +12,7 @@ import re
 import os 
 from utils.utils import logToJson
 from utils.utils import convertToText
+import urllib.request
 
 PORT = 3000
 REMOTE_PORT = 22
@@ -20,7 +21,7 @@ DOMAIN = "sshd"
 HOSTNAME="#"
 
 host_key = paramiko.RSAKey(filename='test_rsa.key')
-
+HOST_IP=urllib.request.urlopen('https://ident.me').read().decode('utf8')
 print('Read key: ' + u(hexlify(host_key.get_fingerprint())))
 
 
@@ -51,7 +52,7 @@ class Server (paramiko.ServerInterface):
         try:
             client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
         except paramiko.ssh_exception.AuthenticationException:
-            logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed')
+            logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],HOST_IP,'auth_failed')
             print('client to sshmitm Authentication failed')
             return paramiko.AUTH_FAILED
         
@@ -136,7 +137,7 @@ class SSHHandler(socketserver.StreamRequestHandler):
                 convertToText(self.LOG_FILE)
                 logToJson(HOSTNAME,server.username,server.password,
                             server.accessTime,server.client_address[0],
-                            'logged_in',self.LOG_FILE+'.log')
+                            'logged_in',HOST_IP,self.LOG_FILE+'.log')
             except:
                 pass
 
