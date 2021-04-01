@@ -13,7 +13,7 @@ services:
     build: filebeats
     restart: on-failure
     environment:
-      - ELASTICSEARCH_HOSTS=23.99.106.134
+      - ELASTICSEARCH_HOSTS=178.128.48.87
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=myfyp@123
     volumes:
@@ -46,7 +46,7 @@ services:
     build: packetbeat
     restart: on-failure
     environment:
-      - ELASTICSEARCH_HOSTS=23.99.106.134
+      - ELASTICSEARCH_HOSTS=178.128.48.87
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=myfyp@123
     network_mode: "service:httpd"

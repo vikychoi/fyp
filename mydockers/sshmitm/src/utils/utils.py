@@ -2,7 +2,7 @@ import os
 import io
 import json
 
-def logToJson(hostname,username,password,accessTime,IP,event,file_path=""):
+def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path=""):
     store_path='log/sshmitm.json'
     #store_path='/home/lmk/fyp/mydockers/sshmitm/src/log/sshmitm.json'
 
@@ -12,6 +12,7 @@ def logToJson(hostname,username,password,accessTime,IP,event,file_path=""):
     log['access_time']=accessTime
     log['ip']=IP
     log['event']=event
+    log['host_IP']=host_IP
     
 
     if event=='logged_in':
