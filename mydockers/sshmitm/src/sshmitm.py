@@ -104,7 +104,7 @@ class SSHHandler(socketserver.StreamRequestHandler):
             #     return
             if server.username=='root':
                 self.client.connect(DOMAIN, username=server.username,
-                                     password=123456, port=REMOTE_PORT)
+                                     password=u'123456', port=REMOTE_PORT)
             else:
                 print('sshmitm to sshd Authentication failed')
                 return
