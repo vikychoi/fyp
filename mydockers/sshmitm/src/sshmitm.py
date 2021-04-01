@@ -94,12 +94,18 @@ class SSHHandler(socketserver.StreamRequestHandler):
 
             self.client = paramiko.SSHClient()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            try:
+            # try:
+            #     self.client.connect(DOMAIN, username=server.username,
+            #                         password=server.password, port=REMOTE_PORT)
+            # except paramiko.ssh_exception.AuthenticationException:
+            #     #logToJson(HOSTNAME,server.username,server.password,server.accessTime,server.client_address[0],'auth_failed')
+            #     #print('Authentication failed')
+            #     print('sshmitm to sshd Authentication failed')
+            #     return
+            if server.username=='root':
                 self.client.connect(DOMAIN, username=server.username,
-                                    password=server.password, port=REMOTE_PORT)
-            except paramiko.ssh_exception.AuthenticationException:
-                #logToJson(HOSTNAME,server.username,server.password,server.accessTime,server.client_address[0],'auth_failed')
-                #print('Authentication failed')
+                                     password=123456, port=REMOTE_PORT)
+            else:
                 print('sshmitm to sshd Authentication failed')
                 return
             
