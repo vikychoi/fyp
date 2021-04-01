@@ -35,6 +35,23 @@ services:
     volumes:
       - pcap-log:/tcpdump
     command: ["--pcapfile","/tcpdump/tcpdump-pipe","--copy", "--flush", "-o", "offlineDispatchAfter=1"]
+    
+  httpd:
+    build: httpd
+    restart: on-failure
+    ports:
+      - 80:80
+      
+  packetbeat:
+    build: packetbeat
+    restart: on-failure
+    environment:
+      - ELASTICSEARCH_HOSTS=23.99.106.134
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=myfyp@123
+    network_mode: "service:httpd"
+    cap_add:
+      - NET_ADMIN
 #  tshark:
 #    build: tshark
 #    environment:
