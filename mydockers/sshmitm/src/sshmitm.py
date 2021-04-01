@@ -49,14 +49,19 @@ class Server (paramiko.ServerInterface):
 
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        try:
-            client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
-        except paramiko.ssh_exception.AuthenticationException:
-            logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed',HOST_IP)
-            print('client to sshmitm Authentication failed')
-            return paramiko.AUTH_FAILED
         
-        return paramiko.AUTH_SUCCESSFUL
+        #try:
+        #    client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
+        #except paramiko.ssh_exception.AuthenticationException:
+        #    logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed',HOST_IP)
+        #    print('client to sshmitm Authentication failed')
+        #    return paramiko.AUTH_FAILED
+        if username=="root":
+            return paramiko.AUTH_SUCCESSFUL
+        else:
+            logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed',HOST_IP)
+            return paramiko.AUTH_FAILED
+            
 
 
     def check_channel_shell_request(self, channel):
