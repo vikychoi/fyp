@@ -37,6 +37,7 @@ def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="
         elif commandList is not None:
             log['sshCommand']=[]
             for i in commandList.split(';'):
+                i=i.strip()
                 log['sshCommand'].append({'command':i,'main_command':i.split(' ')[0],'response':[]})
         
     with open(store_path, 'a') as open_file:
