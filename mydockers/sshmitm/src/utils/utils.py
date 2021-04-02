@@ -2,7 +2,7 @@ import os
 import io
 import json
 
-def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path=""):
+def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="",commandList=None):
     store_path='log/sshmitm.json'
     #store_path='/home/lmk/fyp/mydockers/sshmitm/src/log/sshmitm.json'
 
@@ -16,23 +16,28 @@ def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="
     
 
     if event=='logged_in':
-        log['sshCommand']=[]
-        log['log.file.path']=file_path
-        with open(file_path, 'r',encoding='UTF-8') as open_file:
-            content = open_file.readlines()
-        commandStart=False
-        for i in content:
-            i=''.join([element.replace('\x1b','') for element in list(i)]).rstrip()
-            if i.startswith(hostname):
-                if 'temp' in locals():
-                    log['sshCommand'].append(temp)
-                temp={'command':'','response':[]}
-                fullCommand=i[len(hostname)+1:]
-                temp['command']=fullCommand
-                temp['main_command']=fullCommand.split(' ')[0]
-                commandStart=True
-            elif commandStart:
-                temp['response'].append(i)
+        if file_path != "":
+            log['sshCommand']=[]
+            log['log.file.path']=file_path
+            with open(file_path, 'r',encoding='UTF-8') as open_file:
+                content = open_file.readlines()
+            commandStart=False
+            for i in content:
+                i=''.join([element.replace('\x1b','') for element in list(i)]).rstrip()
+                if i.startswith(hostname):
+                    if 'temp' in locals():
+                        log['sshCommand'].append(temp)
+                    temp={'command':'','response':[]}
+                    fullCommand=i[len(hostname)+1:]
+                    temp['command']=fullCommand
+                    temp['main_command']=fullCommand.split(' ')[0]
+                    commandStart=True
+                elif commandStart:
+                    temp['response'].append(i)
+        elif commandList is not None:
+            log['sshCommand']=[]
+            for i in commandList.split(';'):
+                log['sshCommand'].append({'command':i,'main_command':i.split(' ')[0],'response':[]})
         
     with open(store_path, 'a') as open_file:
         json.dump(log, open_file)
