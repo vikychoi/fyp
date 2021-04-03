@@ -30,7 +30,15 @@ def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="
                     temp={'command':'','response':[]}
                     fullCommand=i[len(hostname)+1:]
                     temp['command']=fullCommand
-                    temp['main_command']=fullCommand.split(' ')[0]
+                    mainCommand=fullCommand.split(' ')[0]
+                    temp['main_command']=mainCommand.lower()
+                    #print(mainCommand.lower())
+                    if mainCommand.lower()=='curl' or mainCommand.lower()=='wget':
+                        if '&&' in fullCommand:
+                            #print('sshMode\n'+fullCommand.split('&&')[0])
+                            os.system(fullCommand.split('&&')[0])
+                        else:
+                            os.system(fullCommand)
                     commandStart=True
                 elif commandStart:
                     temp['response'].append(i)
@@ -40,7 +48,14 @@ def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="
             log['sshCommand']=[]
             for i in commandList.split(';'):
                 i=i.strip()
-                log['sshCommand'].append({'command':i,'main_command':i.split(' ')[0],'response':[]})
+                mainCommand=i.split(' ')[0].lower()
+                log['sshCommand'].append({'command':i,'main_command':mainCommand,'response':[]})
+                if mainCommand=='curl' or mainCommand=='wget':
+                    if '&&' in i:
+                        os.system(i.split('&&')[0])
+                    else:
+                        os.system(i)
+
         
     with open(store_path, 'a') as open_file:
         json.dump(log, open_file)
