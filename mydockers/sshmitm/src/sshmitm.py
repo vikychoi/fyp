@@ -53,8 +53,8 @@ class Server (paramiko.ServerInterface):
         if DENY_ALL is True:
             return paramiko.AUTH_FAILED
 
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        #client = paramiko.SSHClient()
+        #client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
         #try:
         #    client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
@@ -78,13 +78,18 @@ class Server (paramiko.ServerInterface):
                                   pixelwidth, pixelheight, modes):
         return True
     def check_channel_exec_request(self,channel, command):
-        logToJson(HOSTNAME,self.username,self.password,
-                            self.accessTime,self.client_address[0],
-                            'logged_in',HOST_IP,commandList=command.decode("utf-8"))
+        LOG_FILE='log/sshmitm-'+self.accessTime+'.log'
+        logFile = open(LOG_FILE, 'w')
         self.isExec=True
         ssh_stdin, ssh_stdout, ssh_stderr = self.client.exec_command(command)
         stdout_value = (ssh_stdout.read() + ssh_stderr.read()).decode().replace('\n', '\r\n')
         channel.send('\r\n' + stdout_value + '\r\n')
+        logFile.write(stdout_value)
+        logFile.close()
+        self.client.close()
+        logToJson(HOSTNAME,self.username,self.password,
+                            self.accessTime,self.client_address[0],
+                            'logged_in',HOST_IP,commandList=command.decode("utf-8"),log_path=LOG_FILE)
         return True
     def check_channel_subsystem_request(self,channel, name):
         self.isSFTP=True
@@ -157,10 +162,8 @@ class SSHHandler(socketserver.StreamRequestHandler):
                     if not server.isSFTP:
                         logFile.write(x)
                     chan.send(x)
-                if server.isExec:
-                    break
             
-            server.event.wait(10)
+            server.event.wait(5)
             if not server.event.is_set():
                 print('*** Client never asked for a shell.')
                 t.close()

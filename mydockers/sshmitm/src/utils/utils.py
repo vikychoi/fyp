@@ -2,7 +2,7 @@ import os
 import io
 import json
 
-def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="",commandList=None):
+def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="",commandList=None,log_path=''):
     store_path='log/sshmitm.json'
     #store_path='/home/lmk/fyp/mydockers/sshmitm/src/log/sshmitm.json'
 
@@ -35,6 +35,8 @@ def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="
                 elif commandStart:
                     temp['response'].append(i)
         elif commandList is not None:
+            if log_path !='':
+                log['log.file.path']=log_path
             log['sshCommand']=[]
             for i in commandList.split(';'):
                 i=i.strip()
