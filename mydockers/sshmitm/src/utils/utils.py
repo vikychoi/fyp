@@ -21,6 +21,7 @@ def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="
             log['log.file.path']=file_path
             with open(file_path, 'r',encoding='UTF-8') as open_file:
                 content = open_file.readlines()
+            log['fullLog']=content
             commandStart=False
             for i in content:
                 i=''.join([element.replace('\x1b','') for element in list(i)]).rstrip()
@@ -33,28 +34,20 @@ def logToJson(hostname,username,password,accessTime,IP,event,host_IP,file_path="
                     mainCommand=fullCommand.split(' ')[0]
                     temp['main_command']=mainCommand.lower()
                     #print(mainCommand.lower())
-                    if mainCommand.lower()=='curl' or mainCommand.lower()=='wget':
-                        if '&&' in fullCommand:
-                            #print('sshMode\n'+fullCommand.split('&&')[0])
-                            os.system(fullCommand.split('&&')[0])
-                        else:
-                            os.system(fullCommand)
                     commandStart=True
                 elif commandStart:
                     temp['response'].append(i)
         elif commandList is not None:
             if log_path !='':
                 log['log.file.path']=log_path
+            with open(log_path, 'r',encoding='UTF-8') as open_file:
+                content = open_file.readlines()
+            log['fullLog']=content
             log['sshCommand']=[]
             for i in commandList.split(';'):
                 i=i.strip()
                 mainCommand=i.split(' ')[0].lower()
                 log['sshCommand'].append({'command':i,'main_command':mainCommand,'response':[]})
-                if mainCommand=='curl' or mainCommand=='wget':
-                    if '&&' in i:
-                        os.system(i.split('&&')[0])
-                    else:
-                        os.system(i)
 
         
     with open(store_path, 'a') as open_file:

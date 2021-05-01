@@ -43,31 +43,24 @@ class Server (paramiko.ServerInterface):
             return paramiko.OPEN_SUCCEEDED
         return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
 
-    def check_auth_password(self, username, password):
-#        logger_login.info('IP: %s, User: %s, Password: %s, Time : %s \r\n' % (self.client_address[0],
-#                                                        username, password,time.strftime('%Y%m%d-%H%M%S',
-#                                                        time.localtime())))                                                
+    def check_auth_password(self, username, password):                                               
         self.password = password
         self.username = username
         self.accessTime=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         if DENY_ALL is True:
             return paramiko.AUTH_FAILED
 
-        #client = paramiko.SSHClient()
-        #client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        
-        #try:
-        #    client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
-        #except paramiko.ssh_exception.AuthenticationException:
-        #    logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed',HOST_IP)
-        #    print('client to sshmitm Authentication failed')
-        #    return paramiko.AUTH_FAILED
-        if username=="root":
-            return paramiko.AUTH_SUCCESSFUL
-        else:
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    
+        try:
+            client.connect(DOMAIN, username=username,password=password, port=REMOTE_PORT)
+        except paramiko.ssh_exception.AuthenticationException:
             logToJson(HOSTNAME,self.username,self.password,self.accessTime,self.client_address[0],'auth_failed',HOST_IP)
+            print('client to sshmitm Authentication failed')
             return paramiko.AUTH_FAILED
-            
+        
+        return paramiko.AUTH_SUCCESSFUL
 
 
     def check_channel_shell_request(self, channel):
@@ -91,6 +84,7 @@ class Server (paramiko.ServerInterface):
                             self.accessTime,self.client_address[0],
                             'logged_in',HOST_IP,commandList=command.decode("utf-8"),log_path=LOG_FILE)
         return True
+
     def check_channel_subsystem_request(self,channel, name):
         self.isSFTP=True
         return True
@@ -120,20 +114,13 @@ class SSHHandler(socketserver.StreamRequestHandler):
 
             self.client = paramiko.SSHClient()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            # try:
-            #     self.client.connect(DOMAIN, username=server.username,
-            #                         password=server.password, port=REMOTE_PORT)
-            # except paramiko.ssh_exception.AuthenticationException:
-            #     #logToJson(HOSTNAME,server.username,server.password,server.accessTime,server.client_address[0],'auth_failed')
-            #     #print('Authentication failed')
-            #     print('sshmitm to sshd Authentication failed')
-            #     return
-            if server.username=='root':
+            try:
                 self.client.connect(DOMAIN, username=server.username,
-                                     password=u'123456', port=REMOTE_PORT)
-            else:
+                                    password=server.password, port=REMOTE_PORT)
+            except paramiko.ssh_exception.AuthenticationException:
                 print('sshmitm to sshd Authentication failed')
                 return
+
             
             print('Authenticated!')
             if server.isExec:
