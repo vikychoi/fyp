@@ -33,9 +33,6 @@ class Server (paramiko.ServerInterface):
         self.client_address = client_address
         self.isExec=False
         self.isSFTP=False
-        self.client = paramiko.SSHClient()
-        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.client.connect(DOMAIN, username='root',password='123456', port=REMOTE_PORT)
            
 
     def check_channel_request(self, kind, chanid):
@@ -74,12 +71,19 @@ class Server (paramiko.ServerInterface):
         LOG_FILE='log/sshmitm-'+self.accessTime+'.log'
         logFile = open(LOG_FILE, 'w')
         self.isExec=True
-        ssh_stdin, ssh_stdout, ssh_stderr = self.client.exec_command(command)
+
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(DOMAIN, username=self.username,password=self.password, port=REMOTE_PORT)
+        
+        ssh_stdin, ssh_stdout, ssh_stderr = client.exec_command(command)
         stdout_value = (ssh_stdout.read() + ssh_stderr.read()).decode().replace('\n', '\r\n')
         channel.send('\r\n' + stdout_value + '\r\n')
         logFile.write(stdout_value)
         logFile.close()
-        self.client.close()
+        channel.send_exit_status(0)
+        client.close()
+        
         logToJson(HOSTNAME,self.username,self.password,
                             self.accessTime,self.client_address[0],
                             'logged_in',HOST_IP,commandList=command.decode("utf-8"),log_path=LOG_FILE)
