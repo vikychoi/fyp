@@ -15,7 +15,7 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=178.128.48.87
       - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=myfyp@123
+      - ELASTICSEARCH_PASSWORD=<changeme>
     volumes:
        - ssh-log:/log
        - json-log:/json
@@ -48,7 +48,7 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=178.128.48.87
       - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=myfyp@123
+      - ELASTICSEARCH_PASSWORD=<changeme>
     network_mode: "service:httpd"
     cap_add:
       - NET_ADMIN
