@@ -1,9 +1,5 @@
 # fyp
 
-## Todo
-Configure host network setting
-`iptable route host 22 port to 3000 port`
-
 ## Requirements
 `docker`
 `docker-compose`
